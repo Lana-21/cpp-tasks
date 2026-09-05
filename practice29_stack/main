@@ -1,0 +1,118 @@
+#include <iostream>
+#include <cassert>
+using namespace std;
+template <class T, int N> class MyQueue;
+
+template <class T, int N>
+class Node {
+public:
+    Node<T, N>(T value) : value{ value }, next{ nullptr } {}
+    friend ostream& operator<<(ostream& s, const Node<T, N>& node) {
+        s << node.value << endl;
+        return s;
+    }
+    friend class MyQueue<T, N>;
+private:
+    T value;
+    Node<T, N>* next;
+};
+template <class T, int N>
+class MyQueue {
+public:
+    MyQueue() {}
+    ~MyQueue();
+    void push(const T& value); 
+    void pop();                
+    T& top();                  
+    size_t size() const;
+    bool empty() const;     
+    bool isFull() const;   
+    void clear();    
+private:
+    Node<T, N>* head{ nullptr }; 
+    Node<T, N>* tail{ nullptr }; 
+};
+template <class T, int N>
+MyQueue<T, N>::~MyQueue() {
+    clear();
+}
+template <class T, int N>
+void MyQueue<T, N>::clear() {
+    Node<T, N>* buf;
+    while (head != nullptr) {
+        buf = head;
+        head = head->next;
+        delete buf;
+    }
+    tail = nullptr;
+}
+template <class T, int N>
+void MyQueue<T, N>::push(const T& value) {
+    assert(isFull() != true && "Error: Queue full!!!");
+    Node<T, N>* buf = new Node<T, N>{ value };
+    if (empty()) {
+        head = tail = buf;
+    }
+    else {
+        tail->next = buf;
+        tail = buf;
+    }
+}
+template <class T, int N>
+void MyQueue<T, N>::pop() {
+    if (!empty()) {
+        Node<T, N>* buf = head;
+        head = head->next;
+        delete buf;
+        if (head == nullptr) {
+            tail = nullptr;
+        }
+    }
+}
+template <class T, int N>
+T& MyQueue<T, N>::top() {
+    assert(head != nullptr && "Error: Queue empty!!!");
+    return head->value;
+}
+template <class T, int N>
+bool MyQueue<T, N>::empty() const {
+    return (head == nullptr) ? true : false;
+}
+template <class T, int N>
+bool MyQueue<T, N>::isFull() const {
+    return (N == size()) ? true : false;
+}
+template <class T, int N>
+size_t MyQueue<T, N>::size() const {
+    size_t count = 0;
+    Node<T, N>* buf = head;
+    while (buf != nullptr) {
+        ++count;
+        buf = buf->next;
+    }
+    return count;
+}
+
+int main()
+{
+    MyQueue<char, 20> myCharQueue;
+    cout << "Is queue empty? " << (myCharQueue.empty() ? "Yes" : "No") << endl;
+    char str[]{ "My super string!!!!" };
+    cout << str << endl;
+    for (auto ch : str) {
+        myCharQueue.push(ch);
+    }
+    cout << "Queue size: " << myCharQueue.size() << endl;
+    cout << "First element (top): " << myCharQueue.top() << endl;
+    cout << "Removing 3 elements:\n";
+    for (int i = 0; i < 3; ++i) {
+        cout << "Popped: " << myCharQueue.top() << endl;
+        myCharQueue.pop();
+    }
+    cout << "New size: " << myCharQueue.size() << endl;
+    myCharQueue.clear();
+    cout << "Size after clear(): " << myCharQueue.size() << endl;
+    cout << "Is queue empty? " << (myCharQueue.empty() ? "Yes" : "No") << endl;
+    system("pause");
+    return 0;
+}
