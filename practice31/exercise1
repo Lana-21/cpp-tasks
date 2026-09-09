@@ -1,0 +1,161 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Chapter {
+public:
+    Chapter();
+    Chapter(const string& title, int pages);
+    ~Chapter();
+    string getTitle() const;
+    int getPages() const;
+    void setTitle(const string& title);
+    void setPages(int pages);
+    friend ostream& operator<<(ostream& os, const Chapter& ch);
+private:
+    string title;
+    int pages;
+};
+class Book {
+public:
+    Book();
+    Book(const Book& other);
+    Book& operator=(const Book& other);
+    Book(const string& title, const string& genre, const Chapter* chaptersArray, int count);
+    ~Book();
+    string getTitle() const;
+    string getGenre() const;
+    void setTitle(const string& title);
+    void setGenre(const string& genre);
+    int getPagesCount() const;
+    friend ostream& operator<<(ostream& os, const Book& book);
+private:
+    string title;
+    string genre;
+    Chapter* chapters;
+    int chapterCount;
+};
+Chapter::Chapter() : title("None"), pages(0) {
+}
+Chapter::Chapter(const string& title, int pages) : title(title), pages(pages) {
+    cout << "Created chapter: " << title << pages << " pages" << endl;
+}
+Chapter::~Chapter() {
+    cout << "Destroyed chapter: " << title << endl;
+}
+string Chapter::getTitle() const {
+    return title;
+}
+int Chapter::getPages() const {
+    return pages;
+}
+void Chapter::setTitle(const string& title) {
+    this->title = title;
+}
+void Chapter::setPages(int pages) {
+    this->pages = pages;
+}
+ostream& operator<<(ostream& os, const Chapter& ch) {
+    os << " Chapter: " << ch.title << " Pages: " << ch.pages;
+    return os;
+}
+Book::Book() : title("None"), genre("None"), chapterCount(0), chapters(nullptr) {
+    cout << "Created empty default book" << endl;
+}
+Book::Book(const string& title, const string& genre, const Chapter* chaptersArray, int count)
+    : title(title), genre(genre), chapterCount(count) {
+    cout << "Created book: " << title << genre << endl;
+    chapters = new Chapter[chapterCount];
+    for (int i = 0; i < chapterCount; i++) {
+        chapters[i] = chaptersArray[i];
+    }
+}
+Book::Book(const Book& other)
+    : title(other.title), genre(other.genre), chapterCount(other.chapterCount) {
+    cout << "Copy created for book: " << title << endl;
+    chapters = new Chapter[chapterCount];
+    for (int i = 0; i < chapterCount; i++) {
+        chapters[i] = other.chapters[i];
+    }
+}
+Book& Book::operator=(const Book& other) {
+    delete[] chapters;
+    title = other.title;
+    genre = other.genre;
+    chapterCount = other.chapterCount;
+    if (chapterCount > 0 && other.chapters != nullptr) {
+        chapters = new Chapter[chapterCount];
+        for (int i = 0; i < chapterCount; i++) {
+            chapters[i] = other.chapters[i];
+        }
+    }
+    else {
+        chapters = nullptr;
+    }
+    return *this;
+}
+Book::~Book() {
+    if (chapters != nullptr) {
+        for (int i = 0; i < chapterCount; i++) {
+            cout << "Cleaning chapter " << i + 1 << endl;
+        }
+        delete[] chapters; 
+    }
+    cout << "Destroyed book: " << title << endl;
+}
+string Book::getTitle() const {
+    return title;
+}
+string Book::getGenre() const {
+    return genre;
+}
+void Book::setTitle(const string& title) {
+    this->title = title;
+}
+void Book::setGenre(const string& genre) {
+    this->genre = genre;
+}
+int Book::getPagesCount() const {
+    int totalPages = 0;
+    for (int i = 0; i < chapterCount; i++) {
+        totalPages += chapters[i].getPages();
+    }
+    return totalPages;
+}
+ostream& operator<<(ostream& os, const Book& book) {
+    os << "Title: " << book.title << " Genre: " << book.genre << endl;
+    os << "Chapters: " << endl;
+    for (int i = 0; i < book.chapterCount; i++) {
+        os << book.chapters[i] << endl;
+    }
+    os << "Total Pages: " << book.getPagesCount() << endl;
+    return os;
+}
+int main() {
+    Chapter chaptersArray[] = {
+        Chapter("Introduction", 15),
+        Chapter("Main", 120),
+        Chapter("End", 85)
+    };
+    cout << "\nConstructor with Parameters" << endl;
+    Book book1("C++ Guide", "Programming", chaptersArray, 3);
+    cout << book1 << endl;
+    cout << "Total pages in book1: " << book1.getPagesCount() << " pages" << endl;
+    cout << "Default Constructor" << endl;
+    Book book2;
+    cout << book2 << endl;
+    cout << "Copy Constructor" << endl;
+    Book book3 = book1; 
+    cout << book3 << endl;
+    cout << "Assignment Operator" << endl;
+    book2 = book1; 
+    cout << book2 << endl;
+    cout << "Setters " << endl;
+    book2.setTitle("Modern C++");
+    book2.setGenre("Computer Science");
+    cout << "Updated book2 title: " << book2.getTitle() << endl;
+    cout << "Updated book2 genre: " << book2.getGenre() << endl;
+    cout << "Total pages in updated book2: " << book2.getPagesCount() << " pages\n" << endl;
+
+    return 0;
+}
