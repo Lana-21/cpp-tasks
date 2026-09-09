@@ -1,0 +1,169 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Player {
+public:
+    Player();
+    Player(const string& lastName, int number, double rating);
+    ~Player();
+    string getLastName() const;
+    int getNumber() const;
+    double getRating() const;
+    void setLastName(const string& lastName);
+    void setNumber(int number);
+    void setRating(double rating);
+    friend ostream& operator<<(ostream& os, const Player& player);
+private:
+    string lastName;
+    int number;
+    double rating;
+};
+class Team {
+public:
+    Team();
+    Team(const Team& other);
+    Team& operator=(const Team& other);
+    Team(const string& name, Player** playersArray, int count);
+    ~Team();
+    string getName() const;
+    int getPlayerCount() const;
+    void setName(const string& name);
+    void addPlayer(Player* player);
+    double calcRating() const;
+    friend ostream& operator<<(ostream& os, const Team& team);
+private:
+    string name;
+    Player** players;
+    int playerCount;
+};
+Player::Player() : lastName("None"), number(0), rating(0.0) {
+}
+Player::Player(const string& lastName, int number, double rating)
+    : lastName(lastName), number(number), rating(rating) {
+    cout << "Created player: " << lastName << number << " Rating: " << rating << endl;
+}
+Player::~Player() {
+    cout << "Destroyed player: " << lastName << endl;
+}
+string Player::getLastName() const {
+    return lastName;
+}
+int Player::getNumber() const {
+    return number;
+}
+double Player::getRating() const {
+    return rating;
+}
+void Player::setLastName(const string& lastName) {
+    this->lastName = lastName;
+}
+void Player::setNumber(int number) {
+    this->number = number;
+}
+void Player::setRating(double rating) {
+    this->rating = rating;
+}
+ostream& operator<<(ostream& os, const Player& player) {
+    os << " Player: " << player.lastName << " Number: " << player.number << " Rating: " << player.rating;
+    return os;
+}
+Team::Team() : name("None"), players(nullptr), playerCount(0) {
+    cout << "Created empty default team" << endl;
+}
+Team::Team(const string& name, Player** playersArray, int count)
+    : name(name), playerCount(count) {
+    cout << "Created team: " << name << endl;
+    players = new Player* [playerCount];
+    for (int i = 0; i < playerCount; i++) {
+        players[i] = playersArray[i]; 
+    }
+}
+Team::Team(const Team& other)
+    : name(other.name), playerCount(other.playerCount) {
+    cout << "Copy created for team: " << name << endl;
+    players = new Player* [playerCount];
+    for (int i = 0; i < playerCount; i++) {
+        players[i] = other.players[i];
+    }
+}
+Team& Team::operator=(const Team& other) {
+    delete[] players;
+    name = other.name;
+    playerCount = other.playerCount;
+    if (playerCount > 0 && other.players != nullptr) {
+        players = new Player* [playerCount];
+        for (int i = 0; i < playerCount; i++) {
+            players[i] = other.players[i];
+        }
+    }
+    else {
+        players = nullptr;
+    }
+    return *this;
+}
+Team::~Team() {
+    if (players != nullptr) {
+        for (int i = 0; i < playerCount; i++) {
+            cout << "Removing player " << i + 1 << " from team" << endl;
+        }
+        delete[] players; 
+    }
+    cout << "Destroyed team: " << name << endl;
+}
+string Team::getName() const {
+    return name;
+}
+int Team::getPlayerCount() const {
+    return playerCount;
+}
+void Team::setName(const string& name) {
+    this->name = name;
+}
+void Team::addPlayer(Player* player) {
+    Player** temp = new Player* [playerCount + 1];
+    for (int i = 0; i < playerCount; i++) {
+        temp[i] = players[i];
+    }
+    temp[playerCount] = player;
+    delete[] players;
+    players = temp;
+    playerCount++;
+    cout << "Added player " << player->getLastName() << " to team " << name << endl;
+}
+double Team::calcRating() const {
+    if (playerCount == 0) return 0.0;
+    double sum = 0.0;
+    for (int i = 0; i < playerCount; i++) {
+        sum += players[i]->getRating();
+    }
+    return sum / playerCount;
+}
+ostream& operator<<(ostream& os, const Team& team) {
+    os << "Team Name: " << team.name << endl;
+    os << "Players List:" << endl;
+    for (int i = 0; i < team.playerCount; i++) {
+        if (team.players[i] != nullptr) {
+            os << " Player: " << team.players[i]->getLastName()
+                << " Number: " << team.players[i]->getNumber()
+                << " Rating: " << team.players[i]->getRating() << endl;
+        }
+    }
+    os << "Average Team Rating: " << team.calcRating() << endl;
+    return os;
+}
+int main() {
+    Player p1("Shevchenko", 7, 9.5);
+    Player p2("Zinchenko", 11, 8.7);
+    Player p3("Mudryk", 10, 8.2);
+    cout << "Creating Team container" << endl;
+    Team myTeam("Dynamo", nullptr, 0);
+    myTeam.addPlayer(&p1);
+    myTeam.addPlayer(&p2);
+    myTeam.addPlayer(&p3);
+    cout << endl << myTeam << endl;
+    cout << p1 << endl;
+    cout << p2 << endl;
+    cout << p3 << endl;
+    return 0;
+}
