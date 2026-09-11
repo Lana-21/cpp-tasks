@@ -1,0 +1,190 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Passenger {
+public:
+    Passenger();
+    Passenger(const string& name, int ticketNumber);
+    ~Passenger();
+    string getName() const;
+    int getTicketNumber() const;
+    void setName(const string& name);
+    void setTicketNumber(int ticketNumber);
+    friend ostream& operator<<(ostream& os, const Passenger& passenger);
+private:
+    string name;
+    int ticketNumber;
+};
+class Bus {
+public:
+    Bus();
+    Bus(const Bus& other);
+    Bus& operator=(const Bus& other);
+    Bus(const string& route, Passenger** passengersArray, int count);
+    ~Bus();
+    string getRoute() const;
+    int getPassengerCount() const;
+    void setRoute(const string& route);
+    void boardPassenger(Passenger* passenger);
+    void alightPassenger(Passenger* passenger);
+    friend ostream& operator<<(ostream& os, const Bus& bus);
+private:
+    string route;
+    Passenger** passengers;
+    int passengerCount;
+};
+Passenger::Passenger() : name("None"), ticketNumber(0) {
+}
+Passenger::Passenger(const string& name, int ticketNumber)
+    : name(name), ticketNumber(ticketNumber) {
+    cout << "Created passenger: " << name << " Ticket #" << ticketNumber << endl;
+}
+Passenger::~Passenger() {
+    cout << "Destroyed passenger: " << name << endl;
+}
+string Passenger::getName() const {
+    return name;
+}
+int Passenger::getTicketNumber() const {
+    return ticketNumber;
+}
+void Passenger::setName(const string& name) {
+    this->name = name;
+}
+void Passenger::setTicketNumber(int ticketNumber) {
+    this->ticketNumber = ticketNumber;
+}
+ostream& operator<<(ostream& os, const Passenger& passenger) {
+    os << " Passenger: " << passenger.name << " Ticket: #" << passenger.ticketNumber;
+    return os;
+}
+Bus::Bus() : route("None"), passengers(nullptr), passengerCount(0) {
+    cout << "Created empty default bus" << endl;
+}
+Bus::Bus(const string& route, Passenger** passengersArray, int count)
+    : route(route), passengerCount(count) {
+    cout << "Created bus: " << route << endl;
+    if (passengerCount > 0 && passengersArray != nullptr) {
+        passengers = new Passenger * [passengerCount];
+        for (int i = 0; i < passengerCount; i++) {
+            passengers[i] = passengersArray[i];
+        }
+    }
+    else {
+        passengers = nullptr;
+    }
+}
+Bus::Bus(const Bus& other)
+    : route(other.route), passengerCount(other.passengerCount) {
+    cout << "Copy created for bus: " << route << endl;
+    if (passengerCount > 0 && other.passengers != nullptr) {
+        passengers = new Passenger * [passengerCount];
+        for (int i = 0; i < passengerCount; i++) {
+            passengers[i] = other.passengers[i];
+        }
+    }
+    else {
+        passengers = nullptr;
+    }
+}
+Bus& Bus::operator=(const Bus& other) {
+    delete[] passengers;
+    route = other.route;
+    passengerCount = other.passengerCount;
+    if (passengerCount > 0 && other.passengers != nullptr) {
+        passengers = new Passenger * [passengerCount];
+        for (int i = 0; i < passengerCount; i++) {
+            passengers[i] = other.passengers[i];
+        }
+    }
+    else {
+        passengers = nullptr;
+    }
+    return *this;
+}
+Bus::~Bus() {
+    if (passengers != nullptr) {
+        for (int i = 0; i < passengerCount; i++) {
+            cout << "Removing passenger " << i + 1 << " from bus" << endl;
+        }
+        delete[] passengers;
+    }
+    cout << "Destroyed bus: " << route << endl;
+}
+string Bus::getRoute() const {
+    return route;
+}
+int Bus::getPassengerCount() const {
+    return passengerCount;
+}
+void Bus::setRoute(const string& route) {
+    this->route = route;
+}
+void Bus::boardPassenger(Passenger* passenger) {
+    Passenger** temp = new Passenger * [passengerCount + 1];
+    for (int i = 0; i < passengerCount; i++) {
+        temp[i] = passengers[i];
+    }
+    temp[passengerCount] = passenger;
+    delete[] passengers;
+    passengers = temp;
+    passengerCount++;
+    cout << "Passenger " << passenger->getName() << " boarded the bus " << route << endl;
+}
+void Bus::alightPassenger(Passenger* passenger) {
+    int index = -1;
+    for (int i = 0; i < passengerCount; i++) {
+        if (passengers[i] == passenger) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1) return;
+    if (passengerCount - 1 == 0) {
+        delete[] passengers;
+        passengers = nullptr;
+        passengerCount = 0;
+    }
+    else {
+        Passenger** temp = new Passenger * [passengerCount - 1];
+        for (int i = 0, j = 0; i < passengerCount; i++) {
+            if (i != index) {
+                temp[j] = passengers[i];
+                j++;
+            }
+        }
+        delete[] passengers;
+        passengers = temp;
+        passengerCount--;
+    }
+    cout << "Passenger " << passenger->getName() << " alighted from bus " << route << endl;
+}
+ostream& operator<<(ostream& os, const Bus& bus) {
+    os << "Bus Route: " << bus.route << endl;
+    os << "Passengers List:" << endl;
+    for (int i = 0; i < bus.passengerCount; i++) {
+        if (bus.passengers[i] != nullptr) {
+            os << " Passenger: " << bus.passengers[i]->getName()
+                << " Number: #" << bus.passengers[i]->getTicketNumber() << endl;
+        }
+    }
+    return os;
+}
+int main() {
+    Passenger pass1("Honchar", 1001);
+    Passenger pass2("Koval", 1002);
+    Passenger pass3("Bondar", 1003);
+    cout << "Creating Bus container" << endl;
+    Bus myBus("Route #11", nullptr, 0);
+    myBus.boardPassenger(&pass1);
+    myBus.boardPassenger(&pass2);
+    myBus.boardPassenger(&pass3);
+    cout << endl << myBus << endl;
+    myBus.alightPassenger(&pass2);
+    cout << endl << myBus << endl;
+    cout << pass1 << endl;
+    cout << pass2 << endl;
+    cout << pass3 << endl;
+    return 0;
+}
