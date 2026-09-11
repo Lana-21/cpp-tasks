@@ -1,0 +1,164 @@
+class Room {
+public:
+    Room();
+    Room(const string& purpose, double area, int windowsCount);
+    ~Room();
+    string getPurpose() const;
+    double getArea() const;
+    int getWindowsCount() const;
+    void setPurpose(const string& purpose);
+    void setArea(double area);
+    void setWindowsCount(int windowsCount);
+    friend ostream& operator<<(ostream& os, const Room& room);
+private:
+    string purpose;
+    double area;
+    int windowsCount;
+};
+class Apartment {
+public:
+    Apartment();
+    Apartment(const Apartment& other);
+    Apartment& operator=(const Apartment& other);
+    Apartment(const string& address, double totalArea, const Room* roomsArray, int count);
+    ~Apartment();
+    string getAddress() const;
+    double getTotalArea() const;
+    void setAddress(const string& address);
+    void setTotalArea(double totalArea);
+    double calcArea() const;
+    friend ostream& operator<<(ostream& os, const Apartment& apt);
+private:
+    string address;
+    double totalArea;
+    Room* rooms;
+    int roomCount;
+};
+Room::Room() : purpose("None"), area(0.0), windowsCount(0) {
+}
+Room::Room(const string& purpose, double area, int windowsCount)
+    : purpose(purpose), area(area), windowsCount(windowsCount) {
+    cout << "Created room: " << purpose << area << " sq m, " << windowsCount << " windows" << endl;
+}
+Room::~Room() {
+    cout << "Destroyed room: " << purpose << endl;
+}
+string Room::getPurpose() const {
+    return purpose;
+}
+double Room::getArea() const {
+    return area;
+}
+int Room::getWindowsCount() const {
+    return windowsCount;
+}
+void Room::setPurpose(const string& purpose) {
+    this->purpose = purpose;
+}
+void Room::setArea(double area) {
+    this->area = area;
+}
+void Room::setWindowsCount(int windowsCount) {
+    this->windowsCount = windowsCount;
+}
+ostream& operator<<(ostream& os, const Room& room) {
+    os << " Room: " << room.purpose << " Area: " << room.area << " sq m, Windows: " << room.windowsCount;
+    return os;
+}
+Apartment::Apartment() : address("None"), totalArea(0.0), roomCount(0), rooms(nullptr) {
+    cout << "Created empty default apartment" << endl;
+}
+Apartment::Apartment(const string& address, double totalArea, const Room* roomsArray, int count)
+    : address(address), totalArea(totalArea), roomCount(count) {
+    cout << "Created apartment: " << address << endl;
+    rooms = new Room[roomCount];
+    for (int i = 0; i < roomCount; i++) {
+        rooms[i] = roomsArray[i];
+    }
+}
+Apartment::Apartment(const Apartment& other)
+    : address(other.address), totalArea(other.totalArea), roomCount(other.roomCount) {
+    cout << "Copy created for apartment: " << address << endl;
+    rooms = new Room[roomCount];
+    for (int i = 0; i < roomCount; i++) {
+        rooms[i] = other.rooms[i];
+    }
+}
+Apartment& Apartment::operator=(const Apartment& other) {
+    delete[] rooms;
+    address = other.address;
+    totalArea = other.totalArea;
+    roomCount = other.roomCount;
+    if (roomCount > 0 && other.rooms != nullptr) {
+        rooms = new Room[roomCount];
+        for (int i = 0; i < roomCount; i++) {
+            rooms[i] = other.rooms[i];
+        }
+    }
+    else {
+        rooms = nullptr;
+    }
+    return *this;
+}
+Apartment::~Apartment() {
+    if (rooms != nullptr) {
+        for (int i = 0; i < roomCount; i++) {
+            cout << "Cleaning room " << i + 1 << endl;
+        }
+        delete[] rooms;
+    }
+    cout << "Destroyed apartment: " << address << endl;
+}
+string Apartment::getAddress() const {
+    return address;
+}
+double Apartment::getTotalArea() const {
+    return totalArea;
+}
+void Apartment::setAddress(const string& address) {
+    this->address = address;
+}
+void Apartment::setTotalArea(double totalArea) {
+    this->totalArea = totalArea;
+}
+double Apartment::calcArea() const {
+    double sum = 0.0;
+    for (int i = 0; i < roomCount; i++) {
+        sum += rooms[i].getArea();
+    }
+    return sum;
+}
+ostream& operator<<(ostream& os, const Apartment& apt) {
+    os << "Address: " << apt.address << " Total Area: " << apt.totalArea << " sq m" << endl;
+    os << "Rooms:" << endl;
+    for (int i = 0; i < apt.roomCount; i++) {
+        os << apt.rooms[i] << endl;
+    }
+    os << "Rooms Area: " << apt.calcArea() << " sq m" << endl;
+    return os;
+}
+int main() {
+    Room roomsArray[] = {
+        Room("Kitchen", 15.5, 1),
+        Room("Bedroom", 20.0, 2),
+        Room("Living Room", 25.0, 2)
+    };
+    cout << "\nConstructor with Parameters " << endl;
+    Apartment apt1("Street 12, Apt 4", 70.0, roomsArray, 3);
+    cout << endl << apt1 << endl;
+    cout << "Default Constructor" << endl;
+    Apartment apt2;
+    cout << endl << apt2 << endl;
+    cout << "Copy Constructor " << endl;
+    Apartment apt3 = apt1;
+    cout << endl << apt3 << endl;
+    cout << "Assignment Operator " << endl;
+    apt2 = apt1;
+    cout << endl << apt2 << endl;
+    cout << "Setters " << endl;
+    apt2.setAddress("Green 5, Apt 10");
+    apt2.setTotalArea(75.0);
+    cout << "Updated apt2 address: " << apt2.getAddress() << endl;
+    cout << "Updated apt2 total area: " << apt2.getTotalArea() << endl;
+    return 0;
+}
