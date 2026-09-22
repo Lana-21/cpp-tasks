@@ -1,0 +1,16 @@
+3
+TechCorp
+John Smith
++1-555-0192
+100 Innovation Way, New York
+Software Development
+SoftServe
+Alex Johnson
++380-67-123-4567
+79 Franko St, Lviv
+IT Consulting
+Nova Poshta
+Viacheslav Klymov
++380-800-500-609
+10 Express Ave, Kyiv
+Logistics
