@@ -20,8 +20,3 @@ class FoodAmountException : public ZooException {
 public:
     FoodAmountException(const string& message) : ZooException(message) {}
 };
-class ZooFullException : public ZooException {
-public:
-    ZooFullException(const string& message) : ZooException(message) {}
-};
-
