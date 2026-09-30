@@ -1,0 +1,10 @@
+What is the capital of Ukraine?
+Lviv
+Kyiv
+Odesa
+Kharkiv
+What is 2 + 2 * 2?
+8
+6
+4
+2
