@@ -1,0 +1,33 @@
+5
+Cash
+Cash Wallet
+1500
+DebitCard
+Main Debit Card
+4200.5
+CreditCard
+Travel Credit Card
+-2000
+10000
+DebitCard
+black
+5000
+Cash
+holiday
+10000
+5
+250.5
+Food
+28
+120
+Transport
+29
+800
+Entertainment
+30
+450
+Food
+30
+3000
+transport
+29

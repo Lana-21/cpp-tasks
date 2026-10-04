@@ -1,0 +1,45 @@
+REPORT FOR DAY
+  Entertainment - 800 USD (Day 30)
+  Food - 450 USD (Day 30)
+TOTAL EXPENSES: 1250 USD
+
+REPORT FOR WEEK
+  Food - 250.5 USD (Day 28)
+  Transport - 120 USD (Day 29)
+  Entertainment - 800 USD (Day 30)
+  Food - 450 USD (Day 30)
+  transport - 3000 USD (Day 29)
+TOTAL EXPENSES: 4620.5 USD
+
+REPORT FOR MONTH
+  Food - 250.5 USD (Day 28)
+  Transport - 120 USD (Day 29)
+  Entertainment - 800 USD (Day 30)
+  Food - 450 USD (Day 30)
+  transport - 3000 USD (Day 29)
+TOTAL EXPENSES: 4620.5 USD
+
+
+TOP-3 EXPENSES FOR WEEK
+  1. transport - 3000 USD (Day 29)
+  2. Entertainment - 800 USD (Day 30)
+  3. Food - 450 USD (Day 30)
+
+
+TOP-3 EXPENSES FOR MONTH
+  1. transport - 3000 USD (Day 29)
+  2. Entertainment - 800 USD (Day 30)
+  3. Food - 450 USD (Day 30)
+
+
+TOP-3 CATEGORIES FOR WEEK
+  1. transport - 3120 USD
+  2. entertainment - 800 USD
+  3. food - 700.5 USD
+
+
+TOP-3 CATEGORIES FOR MONTH
+  1. transport - 3120 USD
+  2. entertainment - 800 USD
+  3. food - 700.5 USD
+
